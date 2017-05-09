@@ -2,6 +2,26 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Test cloudformation template
 Resources:
+
+  UserResourceLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: UserResourceLogGroup
+
+  LambdaExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: LambdaExecutionRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+
   Client:
     Type: AWS::S3::Bucket
     Properties:
@@ -10,3 +30,25 @@ Resources:
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: error.html
+
+  UserResource:
+    DependsOn: LambdaExecutionRole
+    Type: "AWS::Lambda::Function"
+    Properties:
+      FunctionName: UserResource
+      Description: UserResource
+      Code:
+        ZipFile: |
+          exports.handler = (event, context, callback) => {
+            callback(null, {
+              statusCode: 200,
+              body: JSON.stringify({
+                username: 'corey'
+              })
+            });
+          };
+      Handler: handler
+      MemorySize: 128
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs6.10
+      Timeout: 3

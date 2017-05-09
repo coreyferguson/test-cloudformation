@@ -7,13 +7,14 @@ AWS.config.update({
 });
 
 const cloudFormationTemplate = fs.readFileSync('./cloudformation-template.yml').toString();
-console.log('cloudFormationTemplate:', cloudFormationTemplate);
+// console.log('cloudFormationTemplate:', cloudFormationTemplate);
 
 const cloudformation = new AWS.CloudFormation();
 
 cloudformation.createStack({
   StackName: 'test-cloudformation',
-  TemplateBody: cloudFormationTemplate
+  TemplateBody: cloudFormationTemplate,
+  Capabilities: [ 'CAPABILITY_NAMED_IAM' ]
 }, function(err, data) {
   if (err) console.log(err, err.stack);
   else     console.log(data);
