@@ -1,0 +1,12 @@
+
+AWSTemplateFormatVersion: 2010-09-09
+Description: Test cloudformation template
+Resources:
+  Client:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      BucketName: test.overattribution.com
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
