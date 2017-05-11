@@ -6,8 +6,8 @@ AWS.config.update({
   region: 'us-west-2'
 });
 
-const cloudFormationTemplate = fs.readFileSync('./cloudformation-template.yml').toString();
-// console.log('cloudFormationTemplate:', cloudFormationTemplate);
+const cloudFormationTemplate =
+  fs.readFileSync('./cloudformation-template.yml').toString();
 
 const cloudformation = new AWS.CloudFormation();
 
