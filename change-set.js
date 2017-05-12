@@ -7,10 +7,7 @@ AWS.config.update({
 });
 
 const cloudFormationTemplate = fs.readFileSync('./cloudformation-template.yml').toString();
-console.log('cloudFormationTemplate:', cloudFormationTemplate);
-
 const cloudformation = new AWS.CloudFormation();
-
 cloudformation.createChangeSet({
   ChangeSetName: 'test-cloudformation-changeset',
   StackName: 'test-cloudformation',
