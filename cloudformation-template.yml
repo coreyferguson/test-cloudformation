@@ -3,6 +3,38 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: Test cloudformation template
 Resources:
 
+  Client:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      BucketName: test.overattribution.com
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+
+  CloudWatchRole:
+   Type: "AWS::IAM::Role"
+   Properties:
+    AssumeRolePolicyDocument:
+     Version: "2012-10-17"
+     Statement:
+      - Effect: Allow
+        Principal:
+         Service:
+          - "apigateway.amazonaws.com"
+        Action: "sts:AssumeRole"
+    Path: "/"
+    ManagedPolicyArns:
+     - "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+
+  ApiGatewayAccount:
+   Type: "AWS::ApiGateway::Account"
+   Properties:
+    CloudWatchRoleArn:
+     "Fn::GetAtt":
+      - CloudWatchRole
+      - Arn
+
   LambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -15,24 +47,15 @@ Resources:
             - lambda.amazonaws.com
           Action:
           - sts:AssumeRole
+      Path: "/"
       Policies:
-      - PolicyName: root
+      - PolicyName: LambdaExecutionRoleLogsPolicy
         PolicyDocument:
           Version: '2012-10-17'
           Statement:
           - Effect: Allow
-            Action:
-            - logs:*
+            Action: logs:*
             Resource: arn:aws:logs:*:*:*
-
-  Client:
-    Type: AWS::S3::Bucket
-    Properties:
-      AccessControl: PublicRead
-      BucketName: test.overattribution.com
-      WebsiteConfiguration:
-        IndexDocument: index.html
-        ErrorDocument: error.html
 
   API:
     Type: AWS::ApiGateway::RestApi

@@ -1,0 +1,2 @@
+- deploy API to dev
+- enable cloudwatch logs
